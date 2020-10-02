@@ -147,3 +147,106 @@ weather_df %>%
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
 ![](visz_eda_2_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+## Themes
+
+``` r
+weather_df %>% 
+  ggplot(aes( x = tmin, y = tmax, color = name)) + geom_point(alpha = .4 ) +
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature",
+    y = "MAximum daily temperature",
+    caption = "Data from rnoaa package"
+  ) + viridis::scale_color_viridis(
+    name = "Location", discrete = "TRUE"
+  ) + theme(legend.position = "bottom")
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](visz_eda_2_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+change the overall theme
+
+``` r
+weather_df %>% 
+  ggplot(aes( x = tmin, y = tmax, color = name)) + geom_point(alpha = .4 ) +
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature",
+    y = "MAximum daily temperature",
+    caption = "Data from rnoaa package"
+  ) + viridis::scale_color_viridis(
+    name = "Location", discrete = "TRUE"
+  ) + theme_minimal()
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](visz_eda_2_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+## setting options
+
+``` r
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+## Data args in geom
+
+``` r
+central_park =
+  weather_df %>% 
+  filter(name == "CentralPark_NY")
+
+waikiki = weather_df %>% 
+  filter(name == "Waikiki_HA")
+
+ggplot(data = waikiki, aes(x = date, y = tmax, color = name)) + geom_point() + geom_line(data = central_park)
+```
+
+    ## Warning: Removed 3 rows containing missing values (geom_point).
+
+![](visz_eda_2_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+## patchwork
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, fill = name)) + geom_density(alpha = .5) + facet_grid(. ~ name)
+```
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_density).
+
+![](visz_eda_2_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+what happens when you want multipanel plots but can’t facet?
+
+``` r
+tmax_tmin_p = 
+ weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + geom_point(alpha = .5) + theme(legend.position = "none")
+
+prcp_dens_p =
+  weather_df %>% 
+  filter(prcp > 0) %>% 
+  ggplot(aes(x = prcp, fill = name)) + geom_density(alpha = .5) + theme(legend.position = "none")
+
+tmax_date_p =
+  weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) + geom_point() + geom_smooth(se = FALSE) + theme(legend.position = "none")
+```
